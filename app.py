@@ -10,7 +10,6 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 load_dotenv()
 analyzer = SentimentIntensityAnalyzer()
 
-# Asegúrate de tener tu API key de GROQ configurada
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 llm = ChatGroq(
     model="gemma2-9b-it",
@@ -71,27 +70,14 @@ if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
     st.chat_message("assistant").write(f"**Noticia:** {noticia}")
     
-    for mensaje in st.session_state.historial:
-        st.chat_message(mensaje["role"]).write(mensaje["content"])
-    
     user_input = st.chat_input("Escribe tu reacción")
     
     if user_input:
-        if evaluar_respuesta(user_input) == "incompleta": # Comparamos directamente el resultado
+        if evaluar_respuesta(user_input) == "incompleta":
             st.warning("Tu respuesta parece incompleta. Intenta expandir tu opinión.")
         else:
             sentimiento = sentiment_tool.run(user_input)
-            compound = sentimiento['compound']
-            
             st.session_state.reacciones[st.session_state.contador] = {"texto": user_input, "sentimiento": sentimiento}
-            
-            st.session_state.historial.append({"role": "user", "content": user_input})
-            st.chat_message("user").write(user_input)
-            
-            analisis_texto = f"**Análisis de Sentimiento:** {sentimiento}"
-            st.session_state.historial.append({"role": "assistant", "content": analisis_texto})
-            st.chat_message("assistant").write(analisis_texto)
-            
             st.session_state.contador += 1
             st.rerun()
 else:
