@@ -5,3 +5,4 @@ langchain_community
 matplotlib
 gspread
 oauth2client
+vaderSentiment
