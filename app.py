@@ -32,14 +32,14 @@ sentiment_tool = Tool(
 def evaluar_respuesta(texto):
     prompt = f"""
     Evalúa la calidad de la siguiente respuesta de un usuario a una noticia. 
-    La respuesta debe ser clara, bien desarrollada y relevante. 
+    La respuesta debe contener al menos una opinión o idea relevante para ser considerada completa. 
     Responde solo con "completa" o "incompleta".
     
     Respuesta: {texto}
     """
     respuesta = llm.invoke([HumanMessage(content=prompt)])
     resultado = respuesta.content.strip().lower() if respuesta.content else "incompleta"
-    return resultado # Agregamos el retorno del resultado
+    return resultado
 
 def asignar_puntuacion(compound, categoria):
     if categoria in ["Ambiental", "Gobernanza", "Riesgo"]:
