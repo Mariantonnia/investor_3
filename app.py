@@ -1,8 +1,5 @@
 import streamlit as st
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import os
-import json
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
@@ -13,7 +10,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 load_dotenv()
 analyzer = SentimentIntensityAnalyzer()
 
-# Asegúrate de tener tu API key de OpenAI configurada
+# Asegúrate de tener tu API key de GROQ configurada
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 llm = ChatGroq(
     model="gemma2-9b-it",
@@ -42,7 +39,7 @@ def evaluar_respuesta(texto):
     """
     respuesta = llm.invoke([HumanMessage(content=prompt)])
     resultado = respuesta.content.strip().lower() if respuesta.content else "incompleta"
-
+    return resultado # Agregamos el retorno del resultado
 
 def asignar_puntuacion(compound, categoria):
     if categoria in ["Ambiental", "Gobernanza", "Riesgo"]:
@@ -80,7 +77,7 @@ if st.session_state.contador < len(noticias):
     user_input = st.chat_input("Escribe tu reacción")
     
     if user_input:
-        if not evaluar_respuesta(user_input):
+        if evaluar_respuesta(user_input) == "incompleta": # Comparamos directamente el resultado
             st.warning("Tu respuesta parece incompleta. Intenta expandir tu opinión.")
         else:
             sentimiento = sentiment_tool.run(user_input)
