@@ -40,8 +40,9 @@ def evaluar_respuesta(texto):
     
     Respuesta: {texto}
     """
-    resultado = llm([HumanMessage(content=prompt)]).content.strip().lower()
-    return resultado == "completa"
+    respuesta = llm.invoke([HumanMessage(content=prompt)])
+    resultado = respuesta.content.strip().lower() if respuesta.content else "incompleta"
+
 
 def asignar_puntuacion(compound, categoria):
     if categoria in ["Ambiental", "Gobernanza", "Riesgo"]:
